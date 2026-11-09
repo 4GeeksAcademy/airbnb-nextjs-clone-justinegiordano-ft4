@@ -1,74 +1,37 @@
-# Airbnb UI Clone Context
+# Airbnb UI Clone — Project Context
 
 ## Project Overview
 
-This project is an educational Airbnb UI clone for an AI Engineering course. It will recreate selected Airbnb browsing and room-detail experiences using original implementation code. The intended users are travelers exploring stays and the course instructor reviewing the interface and implementation.
+For this project, I'm building a website similar to Airbnb where people can browse places to stay, search through properties, and view more details about a listing. The goal is to make the website easy to navigate on both phones and computers.
 
-## Required Pages
+## Who Will Use It?
 
-- **Home (`/`)**: Entry point for browsing stays, with the primary search controls and a curated or browsable set of listings.
-- **Catalog (`/catalog`)**: Search results for stays, with controls to refine the available listings.
-- **Room Detail (`/rooms/[id]`)**: Details for one selected stay, including its imagery, key information, and booking affordance.
+The website is for travelers looking for somewhere to stay. They should be able to find properties, compare prices and ratings, and view more information before deciding where they want to stay.
 
-The exact content, layout, and interactions for these pages will be specified from the real Airbnb screenshots supplied for review. Do not treat the initial component inventory below as a final visual specification.
+## The Three Pages
 
-## Initial Component Inventory
+**Home Page (`/`)**
 
-These are proposed responsibilities to guide screenshot review and implementation planning. Adjust names, boundaries, and composition to match the supplied references.
+The homepage will have a navigation bar, search bar, property categories, and listing cards showing pictures, prices, and ratings. Users will be able to search and select categories.
 
-### Shared Components
+**Catalog Page (`/catalog`)**
 
-- **SiteHeader**: Brand/navigation area and responsive entry points to search or account actions.
-- **SearchBar**: Destination, dates, and guest-count inputs with a search action.
-- **ListingCard**: Stay image, location, dates or summary, price, and rating information.
-- **ListingGrid**: Responsive collection of listing cards.
-- **ImageGallery**: Responsive presentation of a stay's photos.
+This page will show available properties with an option to sort by price. It will also have a map section and listing cards that users can click to view more details.
 
-### Home (`/`)
+**Room Detail Page (`/rooms/[id]`)**
 
-- **HomePage**: Composes the shared header and search experience with the home listing sections.
-- **CategoryNavigation**: Browse-by-category controls, if present in the screenshots.
-- **FeaturedListings**: Home-specific listing collection using `ListingGrid` and `ListingCard`.
+This page will show pictures of a property, its location, rating, host information, amenities, and a booking section where users can adjust the number of guests.
 
-### Catalog (`/catalog`)
+## Main Components
 
-- **CatalogPage**: Composes the shared header and search experience with search results.
-- **CatalogToolbar**: Result summary and available sort/filter actions.
-- **FilterControls**: Search refinement controls, matching the screenshots.
-- **CatalogResults**: Listing collection using `ListingGrid` and `ListingCard`.
+I'll create reusable React components like `SiteHeader`, `SearchBar`, `ListingCard`, `CategoryNavigation`, `RoomPhotoGallery`, and `BookingPanel`.
 
-### Room Detail (`/rooms/[id]`)
+For example, I'll reuse the same `ListingCard` on the Home and Catalog pages instead of building it twice.
 
-- **RoomDetailPage**: Composes the shared header with the selected stay's information.
-- **RoomPhotoGallery**: Detail-page photo layout using or extending `ImageGallery`.
-- **RoomOverview**: Title, location, rating, and host/guest summary.
-- **RoomAmenities**: Stay features and amenities.
-- **BookingPanel**: Price, dates, guest selection, and booking action.
-- **RoomDescription**: Listing description and related detail sections.
+## Design
 
-## Mobile-First Requirements
+I'll build the website for a 375px mobile screen first, then adjust it for larger screens starting at 768px.
 
-- Design and implement from a **375px-wide mobile viewport** first.
-- Support **768px and wider desktop/tablet layouts**, adapting navigation, search, listing columns, galleries, and booking controls to the available space.
-- Keep content readable and controls usable at both target widths; avoid horizontal overflow.
-- Confirm responsive behavior at 375px and at 768px or wider during implementation review.
+## Screenshot Specifications
 
-## Vision-Derived Specifications From Airbnb Screenshots
-
-Screenshots have not yet been provided. Complete this section after reviewing the real references and before implementing the page views.
-
-For each supplied screenshot, record:
-
-- Page/viewport represented and notable layout regions.
-- Component boundaries, hierarchy, and reusable patterns.
-- Typography, colors, spacing, borders, and image treatment that can be observed.
-- Visible interaction states or responsive differences, when evidenced by the references.
-- Any ambiguity that needs instructor/user clarification instead of an assumption.
-
-### Screenshot Inventory
-
-_Pending screenshots._
-
-### Derived Component Specifications
-
-_Pending screenshot review. Do not infer Airbnb-specific details that are not visible in the supplied references._
+I'll add the detailed component specifications here after reviewing real Airbnb screenshots with my AI coding agent, before building each page.
