@@ -69,23 +69,22 @@ The reference is a narrow, white mobile screen with roughly 24px side gutters. U
 
 | Component | Purpose | Possible props |
 | --- | --- | --- |
-| `CatalogPage` | Coordinates filters, result count, price sort state, listings, and map placement. Owns `useState` for `sortOrder` (`"asc"` or `"desc"`) and derives the sorted listings from the current results. | `listings`, `resultCount`, `filters`, `onFilterChange` |
-| `CatalogHeader` | Shows a back action, the current destination/date/guest summary, and an all-filters button. | `destination`, `dates`, `guestLabel`, `onBack`, `onOpenSearch`, `onOpenFilters` |
-| `FilterBar` | Horizontally scrollable filter chips such as Allows pets, Type of place, Price, and Instant Book. | `filters`, `onChange`, `onOpenAll` |
-| `CatalogSummary` | Displays the result count and the AI-description information note. | `resultCount`, `notice` |
-| `PriceSortControl` | Lets the user choose ascending or descending price order; wired to `CatalogPage`'s `useState`. | `sortOrder`, `onSortChange` |
-| `ListingGrid` | Renders the catalog's vertically stacked result cards on mobile. | `listings`, `isLoading` |
-| `ListingCard` | Reuses the Home page component for photo, save action, title, rating, details, and price. Optional Catalog data can provide multiple `images`, `subtitle`, `bedroomCount`, `bedCount`, `bathCount`, `ratingCount`, and `isSuperhost` for the gallery dots and visible details in this screenshot. | Existing Home props (`image`, `title`, `price`, `nightCount`, `rating`, `isGuestFavorite`, `isSaved`, callbacks) plus optional Catalog fields |
-| `MapButton` / `MapPlaceholder` | The button offers map access over the listing area; the placeholder represents the map below results on mobile and beside results on desktop. | Button: `onOpen`; placeholder: `label` |
-| `BottomNavigation` | Reuses the fixed mobile navigation from Home. | `items`, `activeItemId`, `onNavigate` |
+| `CatalogClient` | Controls the search query, active category, price sort order, filtered properties, and responsive result/map layout. | No props; state: `query`, `activeCategory`, `sortOrder` |
+| `SiteHeader` | Provides the controlled search input used to filter properties as the user types. | `query`, `onQueryChange`, `placeholder` |
+| `CategoryRail` | Reuses Home's horizontally scrollable category controls to filter the properties. | `categories`, `activeCategory`, `onSelect` |
+| `PriceSortControl` | The native select in `CatalogClient` switches between low-to-high and high-to-low prices. | Local `sortOrder` state (`"asc"` or `"desc"`) |
+| `ListingGrid` | Renders the filtered, sorted results in one mobile column and multiple wider-screen columns. | `listings` |
+| `ListingCard` | Reuses the Home component for each result's image, save action, title, rating, location, and price. | `property` |
+| `MapPlaceholder` | Displays a gray block labeled “Map” below results on mobile and beside them on desktop. | `className` |
+| `BottomNavigation` | Reuses the fixed mobile navigation from Home. | `active` |
 
 ### Arrangement and Behavior
 
-On mobile, arrange the page as: search summary header with back and filter-settings actions; horizontally scrolling filter chips; centered result count and AI-description note; price-sort control; one-column listing cards; map placeholder below the listings; fixed bottom navigation. Keep the Map button visible over the listing area as shown. On desktop, place the listing results and map placeholder beside each other. The price-sort control changes `sortOrder` between ascending and descending and the displayed cards follow that order. Filter changes update the results and result count. The visible screenshot shows filters and a Map button but does not show the expanded map or sort menu; those interactions are assignment requirements.
+On mobile, arrange the page as: controlled search header; horizontally scrolling category rail; exact result count with short helper copy and the price-sort select; one-column listing cards; gray Map placeholder below the results; and fixed bottom navigation. At desktop widths, place the Map placeholder to the right of the listings. Typing in search or selecting a category updates the results and count; changing the sort select reorders the same properties by price.
 
 ### Visual and Mobile Notes
 
-Use a white background, charcoal primary text and icons, medium-gray secondary details, light-gray outlined filter chips, subtle dividers, and soft shadows. The top search summary is a centered rounded capsule; filter chips are compact rounded pills in a horizontal rail. Give the listing stack roughly 24px side gutters and generous vertical separation. Each white listing card has a large rounded image with a Superhost badge at top left, a heart at top right, and image-position dots near the bottom. Below it, align the title and star rating on one row, then show muted description/room details and a larger price line. Keep the fixed bottom navigation clear of the final result content. Use Tailwind CSS utility classes for styling; treat exact measurements and colors as estimates from the screenshot.
+Use a white background, charcoal text and icons, gray secondary details, subtle dividers, and soft shadows. The search input is a rounded capsule; category buttons are compact rounded pills in a horizontal rail. Give the listing stack roughly 24px side gutters and generous vertical separation. Each shared listing card has a large rounded image with a favorite badge and heart action, followed by its title, star rating, location, and price. The gray Map block follows the complete listing grid on mobile and sits alongside it on desktop. Use Tailwind CSS utility classes for styling; treat exact measurements and colors as estimates from the screenshots.
 
 ## Room Detail Page Screenshot Specification
 
@@ -93,17 +92,16 @@ Use a white background, charcoal primary text and icons, medium-gray secondary d
 
 | Component | Purpose | Possible props and state |
 | --- | --- | --- |
-| `RoomDetailPage` | Loads the selected room and composes its detail sections. Use `useEffect` when `roomId` changes to load room data; expose a visible loading indicator while pending. | `roomId`; state: `room`, `isLoading` |
-| `RoomPhotoGallery` | Displays the main room photo, photo count, and overlaid back/share/favorite controls. Previous/Next buttons cycle through photos using local `useState` for `currentIndex`. | `photos`, `initialIndex`, `onShare`, `isFavorite`, `onToggleFavorite`; state: `currentIndex` |
-| `BackLink` | Returns to the Catalog using Next.js `Link`. | `href` (defaults to `/catalog`), `label` |
-| `RoomOverview` | Shows property title, location, guest/bedroom/bed/bath summary, rating, and review count. | `title`, `location`, `guestCount`, `bedroomCount`, `bedCount`, `bathCount`, `rating`, `reviewCount` |
-| `RoomHighlightList` | Presents location and property highlights with small illustrative icons and short descriptions. | `highlights` (icon, title, description) |
-| `HostSummary` | Shows host avatar, name, and years hosting, plus optional Superhost label. | `avatar`, `hostName`, `yearsHosting`, `isSuperhost` |
-| `RoomDescription` | Shows a truncated description with a Show more action. | `description`, `maxLines` |
-| `AmenitiesList` | Renders amenities as an icon and label list, with an optional show-all action. | `amenities` (icon, label), `totalCount`, `onShowAll` |
-| `LocationSection` | Shows the area heading, map preview, exact-location notice, and neighborhood highlights. | `location`, `mapImage`, `notice`, `neighborhoodDescription` |
-| `BookingBar` | Keeps the nightly price, guest counter with visible − and + buttons, and Reserve button visible on mobile and desktop. The counter uses local `useState`, never goes below 1, and never exceeds `maxGuests`. | `nightlyPrice`, `initialGuestCount`, `maxGuests`, `onReserve`; state: `guestCount` |
-| `RoomLoadingIndicator` | Visible status while room data loads. | `label` (defaults to “Loading room details…”) |
+| `RoomPage` / `RoomDetailClient` | The route passes the URL `id` to the client component. `RoomDetailClient` loads the matching local property after a simulated delay using `useEffect` and shows a loading indicator meanwhile. | Route: Promise `params`; client: `id`; state: `room`, `loadedId` |
+| `RoomPhotoGallery` | Displays the main photo and counter, overlay navigation/share/favorite controls, and Previous/Next buttons. Back navigation uses Next.js `Link` to Catalog. | `photos`, `title`; state: `currentIndex`, `isFavorite` |
+| `RoomOverview` | Shows property title, location, capacity, bedroom/bed/bath summary, rating, and review count. | `property` |
+| `RoomHighlights` | Presents location and property highlights with icons and short descriptions. | `highlights` |
+| `HostSummary` | Shows host avatar, name, years hosting, and optional Superhost label. | `property` |
+| `RoomDescription` | Shows a truncated description with a working Show more/Show less control. | `description`; state: `isExpanded` |
+| `AmenitiesList` | Renders each amenity as an icon and label. | `amenities` |
+| `LocationSection` | Shows the location heading, map preview placeholder, exact-location notice, and neighborhood copy. | `location` |
+| `BookingBar` | Keeps nightly price, guest counter with visible − and + buttons, and Reserve button visible on mobile and desktop. Guest count starts at 1 and stays between 1 and `maxGuests`. | `nightlyPrice`, `maxGuests`; state: `guestCount`, `isReserved` |
+| `RoomLoadingIndicator` | Visible status while room data loads. | No props |
 
 ### Arrangement and Behavior
 
