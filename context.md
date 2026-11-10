@@ -62,3 +62,53 @@ Category selection updates the active category and the displayed listings. Submi
 ### Visual and Mobile Notes
 
 The reference is a narrow, white mobile screen with roughly 24px side gutters. Use charcoal primary text, medium-gray secondary text, light-gray borders and surfaces, soft shadows, and Airbnb coral/pink for the active Explore item. The search trigger and cards are generously rounded; section headings are bold, while listing metadata is smaller and gray. Keep vertical spacing airy (roughly 16–28px between major blocks) and gaps compact (roughly 12px) in horizontal rails. Listing cards fill the single grid column at 375px; the grid may adapt at wider breakpoints. The bottom navigation spans the width and stays fixed above the device edge; allow page content to scroll behind/above it with enough bottom space. Preserve horizontal scrolling in the category and promotion rails without causing page-wide horizontal overflow. Treat the color and spacing values as visual estimates from the screenshot.
+
+## Catalog Page Screenshot Specification
+
+### Component Specification
+
+| Component | Purpose | Possible props |
+| --- | --- | --- |
+| `CatalogPage` | Coordinates filters, result count, price sort state, listings, and map placement. Owns `useState` for `sortOrder` (`"asc"` or `"desc"`) and derives the sorted listings from the current results. | `listings`, `resultCount`, `filters`, `onFilterChange` |
+| `CatalogHeader` | Shows a back action, the current destination/date/guest summary, and an all-filters button. | `destination`, `dates`, `guestLabel`, `onBack`, `onOpenSearch`, `onOpenFilters` |
+| `FilterBar` | Horizontally scrollable filter chips such as Allows pets, Type of place, Price, and Instant Book. | `filters`, `onChange`, `onOpenAll` |
+| `CatalogSummary` | Displays the result count and the AI-description information note. | `resultCount`, `notice` |
+| `PriceSortControl` | Lets the user choose ascending or descending price order; wired to `CatalogPage`'s `useState`. | `sortOrder`, `onSortChange` |
+| `ListingGrid` | Renders the catalog's vertically stacked result cards on mobile. | `listings`, `isLoading` |
+| `ListingCard` | Reuses the Home page component for photo, save action, title, rating, details, and price. Optional Catalog data can provide multiple `images`, `subtitle`, `bedroomCount`, `bedCount`, `bathCount`, `ratingCount`, and `isSuperhost` for the gallery dots and visible details in this screenshot. | Existing Home props (`image`, `title`, `price`, `nightCount`, `rating`, `isGuestFavorite`, `isSaved`, callbacks) plus optional Catalog fields |
+| `MapButton` / `MapPlaceholder` | The button offers map access over the listing area; the placeholder represents the map below results on mobile and beside results on desktop. | Button: `onOpen`; placeholder: `label` |
+| `BottomNavigation` | Reuses the fixed mobile navigation from Home. | `items`, `activeItemId`, `onNavigate` |
+
+### Arrangement and Behavior
+
+On mobile, arrange the page as: search summary header with back and filter-settings actions; horizontally scrolling filter chips; centered result count and AI-description note; price-sort control; one-column listing cards; map placeholder below the listings; fixed bottom navigation. Keep the Map button visible over the listing area as shown. On desktop, place the listing results and map placeholder beside each other. The price-sort control changes `sortOrder` between ascending and descending and the displayed cards follow that order. Filter changes update the results and result count. The visible screenshot shows filters and a Map button but does not show the expanded map or sort menu; those interactions are assignment requirements.
+
+### Visual and Mobile Notes
+
+Use a white background, charcoal primary text and icons, medium-gray secondary details, light-gray outlined filter chips, subtle dividers, and soft shadows. The top search summary is a centered rounded capsule; filter chips are compact rounded pills in a horizontal rail. Give the listing stack roughly 24px side gutters and generous vertical separation. Each white listing card has a large rounded image with a Superhost badge at top left, a heart at top right, and image-position dots near the bottom. Below it, align the title and star rating on one row, then show muted description/room details and a larger price line. Keep the fixed bottom navigation clear of the final result content. Use Tailwind CSS utility classes for styling; treat exact measurements and colors as estimates from the screenshot.
+
+## Room Detail Page Screenshot Specification
+
+### Component Specification
+
+| Component | Purpose | Possible props and state |
+| --- | --- | --- |
+| `RoomDetailPage` | Loads the selected room and composes its detail sections. Use `useEffect` when `roomId` changes to load room data; expose a visible loading indicator while pending. | `roomId`; state: `room`, `isLoading` |
+| `RoomPhotoGallery` | Displays the main room photo, photo count, and overlaid back/share/favorite controls. Previous/Next buttons cycle through photos using local `useState` for `currentIndex`. | `photos`, `initialIndex`, `onShare`, `isFavorite`, `onToggleFavorite`; state: `currentIndex` |
+| `BackLink` | Returns to the Catalog using Next.js `Link`. | `href` (defaults to `/catalog`), `label` |
+| `RoomOverview` | Shows property title, location, guest/bedroom/bed/bath summary, rating, and review count. | `title`, `location`, `guestCount`, `bedroomCount`, `bedCount`, `bathCount`, `rating`, `reviewCount` |
+| `RoomHighlightList` | Presents location and property highlights with small illustrative icons and short descriptions. | `highlights` (icon, title, description) |
+| `HostSummary` | Shows host avatar, name, and years hosting, plus optional Superhost label. | `avatar`, `hostName`, `yearsHosting`, `isSuperhost` |
+| `RoomDescription` | Shows a truncated description with a Show more action. | `description`, `maxLines` |
+| `AmenitiesList` | Renders amenities as an icon and label list, with an optional show-all action. | `amenities` (icon, label), `totalCount`, `onShowAll` |
+| `LocationSection` | Shows the area heading, map preview, exact-location notice, and neighborhood highlights. | `location`, `mapImage`, `notice`, `neighborhoodDescription` |
+| `BookingBar` | Keeps the nightly price, guest counter with visible − and + buttons, and Reserve button visible on mobile and desktop. The counter uses local `useState`, never goes below 1, and never exceeds `maxGuests`. | `nightlyPrice`, `initialGuestCount`, `maxGuests`, `onReserve`; state: `guestCount` |
+| `RoomLoadingIndicator` | Visible status while room data loads. | `label` (defaults to “Loading room details…”) |
+
+### Arrangement and Behavior
+
+On mobile, place a near full-width photo gallery at the top, with back, share, and favorite controls over the image and a photo counter in its lower corner. Continue in a white content surface with rounded top corners: centered title and location/guest details, rating and review count, divider, location/property highlights, host information, expandable description, amenities list and show-all action, then the location map and neighborhood details. Keep the booking bar fixed to the bottom on mobile. On desktop, keep the same nightly price, bounded − / guest count / + controls, and Reserve button visible in a booking panel beside the room details. Use `Link` for back navigation to `/catalog`; Previous/Next update the selected gallery image through `useState`. Load the room for the current `roomId` with `useEffect` and show `RoomLoadingIndicator` until it is ready.
+
+### Visual and Mobile Notes
+
+Use a white background, charcoal headings and icons, gray secondary text, fine light-gray dividers, and a vivid pink Reserve button. The gallery is edge-to-edge and image-led; overlay controls are circular, lightly translucent buttons. The content has about 24px horizontal padding, generous vertical spacing between sections, bold section headings, and simple line icons for amenities. The bottom booking bar has a thin top divider and remains visible while content scrolls; reserve enough bottom padding so it does not cover the last section. Use Tailwind CSS utility classes for styling, with no inline style objects or prebuilt UI library.
